@@ -1,0 +1,14 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test_job:
+  stage: test
+  image: nginx:latest
+
+before_script:
+    - apt update
+    - apt install openssh-server
+  script:
+    - service ssh start
