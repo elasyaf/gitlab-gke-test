@@ -1,14 +1,23 @@
+image: node:5.11.0-wheezy
+
 stages:
   - test
-  - build
-  - deploy
+  - build-and-push
 
-test_job:
+test-job:
   stage: test
-  image: nginx:latest
-
-  before_script:
-      - apt update
-      - apt install openssh-server
+  tags:
+    - build-in-docker
   script:
-      - service ssh start
+    - cd application && npm set progress=false && npm install --silent
+    - export HOST=127.0.0.1
+    - export PORT0=3000
+    - npm run test
+
+build-and-push-job:
+  stage: build-and-push
+  tags:
+    - build-as-docker
+  script:
+    - source ci/set_docker_tag.sh
+    - ci/build_and_deploy.sh
